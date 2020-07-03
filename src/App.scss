@@ -211,7 +211,7 @@ html {
 
   .delete-task {
     @extend .task__check;
-    display: none;
+    // display: none;
     opacity: 0;
     margin-left: auto;
     transition-duration: 0.5s;
