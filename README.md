@@ -1,3 +1,13 @@
+# todo
+
+## TODO
+
+* Add task
+* Delete task
+
+* ? Drop add button where you want to add
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

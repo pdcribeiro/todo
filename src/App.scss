@@ -56,7 +56,7 @@ $add-task-size: 50px;
 
 // Mixins
 
-// @use "sass:map";
+// @use 'sass:map';
 // $breakpoints: (sm: 576px, md: 768px, lg: 992px, xl: 1200px);
 // @mixin media-break($bp) {
 //   @media (min-width: map.get($breakpoints, $bp)) {
@@ -87,6 +87,13 @@ $add-task-size: 50px;
 
 // Generic
 
+html {
+  box-sizing: border-box;
+}
+*, *::after, *::before {
+  box-sizing: inherit;
+}
+
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
   padding: 0;
@@ -98,11 +105,11 @@ h1, h2, h3, h4, h5, h6 {
 .App {
   height: 100vh;
   background-color: $bg-color;
-  overflow-y: auto;
-
+  
   font-size: $medium-font-size;
   // font-family: 'Roboto', sans-serif;
   color: white;
+  overflow-y: auto;
 
   .title {
     padding: 10px 0;
@@ -114,8 +121,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .tasks {
-  padding-bottom: 20px;
-
+  // padding-bottom: 20px;
+  
   &__list {
     height: 90%;
     margin: 0;
@@ -125,10 +132,10 @@ h1, h2, h3, h4, h5, h6 {
   }
   
   .task {
-
     &, &--completed {
       display: flex;
       align-items: center;
+
       padding: 0 $task-padding;
       
       line-height: $task-height;
@@ -136,6 +143,7 @@ h1, h2, h3, h4, h5, h6 {
       &__check {
         display: flex;
         align-items: center;
+
         // background-color: $primary-color;
         padding: 10px;
       
@@ -165,10 +173,10 @@ h1, h2, h3, h4, h5, h6 {
   .show-completed {
     @extend .task;
     justify-content: space-between;
-    margin-top: 20px;
-    padding: 0 20px;
     // border-top: $task-border;
     // border-bottom: none;
+    // margin-top: 20px;
+    padding: 0 20px;
     
     &__toggler {
       float: right;
@@ -176,26 +184,36 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+$task-data-bg-color: lighten($bg-color, 20%);
 .navbar {
-  width: 100%;
-  height: 0;
+  &, &--expanded {
+    width: 100%;
+    height: 0;
+    background-color: $task-data-bg-color;
+    border-radius: 10px 10px 0 0;
+    
+    position: fixed;
+    bottom: $add-task-size + 20px;
+    
+    transition-duration: 0.2s;
+  }
 
-  position: fixed;
-  bottom: 0;
+  &--expanded {
+    bottom: $add-task-size + 20px + 55px;
+  }
   
-  .add-task {
+  &__add-task {
     display: flex;
     justify-content: center;
     align-items: center;
-  
+    
     width: $add-task-size;
     height: $add-task-size;
     background-color: lighten($bg-color, 10%);
-    border-radius: $add-task-size;
+    border-radius: 50%;
+    margin-left: -$add-task-size / 2;
     margin: auto;
-  
-    position: relative;
-    bottom: 20px + $add-task-size;
+    margin-bottom: 20px;
   
     font-size: $add-task-size / 1.4;
     color: $primary-color;
@@ -212,6 +230,26 @@ h1, h2, h3, h4, h5, h6 {
       transform: scale(0.9);
       background-color: lighten($bg-color, 8%);
       transition-duration: 0s;
+    }
+  }
+
+  &__task-data {
+    &, &--expanded {
+      width: 100%;
+      background-color: $task-data-bg-color;
+      border-radius: 10px 10px 0 0;
+      padding: 10px;
+      
+      // position: absolute;
+      // bottom: 0;
+      position: static;
+      // bottom: 100px;
+
+      overflow: hidden;
+      
+      input {
+        width: 100%;
+      }
     }
   }
 }
