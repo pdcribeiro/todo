@@ -1,45 +1,50 @@
-// @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
-// @import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400&display=swap');
 @import '~normalize.css';
 
-// .App {
-//   text-align: center;
-// }
+/* .App {
+  text-align: center;
+}
 
-// .App-logo {
-//   height: 40vmin;
-//   pointer-events: none;
-// }
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
 
-// @media (prefers-reduced-motion: no-preference) {
-//   .App-logo {
-//     animation: App-logo-spin infinite 20s linear;
-//   }
-// }
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
 
-// .App-header {
-//   background-color: #282c34;
-//   min-height: 100vh;
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   justify-content: center;
-//   font-size: calc(10px + 2vmin);
-//   color: white;
-// }
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
 
-// .App-link {
-//   color: #61dafb;
-// }
+.App-link {
+  color: #61dafb;
+}
 
-// @keyframes App-logo-spin {
-//   from {
-//     transform: rotate(0deg);
-//   }
-//   to {
-//     transform: rotate(360deg);
-//   }
-// }
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+@font-face {
+  font-family: Reef;
+  src: url('reef-webfont.woff'), url('reef-webfont.woff') format('woff');
+} */
 
 
 // Variables
@@ -49,20 +54,20 @@ $primary-color: #61dafb;
 $medium-font-size: calc(10px + 2vmin);
 
 $task-height: 10vh;
-$task-padding: 10px;
 $task-border: 1px solid lighten($bg-color, 10%);
+$task-check-size: 20px;
 $add-task-size: 50px;
 
 
 // Mixins
 
-// @use 'sass:map';
-// $breakpoints: (sm: 576px, md: 768px, lg: 992px, xl: 1200px);
-// @mixin media-break($bp) {
-//   @media (min-width: map.get($breakpoints, $bp)) {
-//     @content;
-//   }
-// }
+/* @use 'sass:map';
+$breakpoints: (sm: 576px, md: 768px, lg: 992px, xl: 1200px);
+@mixin media-break($bp) {
+  @media (min-width: map.get($breakpoints, $bp)) {
+    @content;
+  }
+} */
 @mixin media-break-sm {
   @media (min-width: 576px) {
     @content;
@@ -85,29 +90,26 @@ $add-task-size: 50px;
 }
 
 
-// Generic
-
 html {
   box-sizing: border-box;
-}
-*, *::after, *::before {
-  box-sizing: inherit;
+
+  *, *::after, *::before {
+    box-sizing: inherit;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    padding: 0;
+  }
 }
 
-h1, h2, h3, h4, h5, h6 {
-  margin: 0;
-  padding: 0;
-}
-
-
-// App
 
 .App {
   height: 100vh;
   background-color: $bg-color;
   
   font-size: $medium-font-size;
-  // font-family: 'Roboto', sans-serif;
+  font-family: 'Quicksand', sans-serif;
   color: white;
   overflow-y: auto;
 
@@ -121,10 +123,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .tasks {
-  // padding-bottom: 20px;
   
   &__list {
-    height: 90%;
     margin: 0;
     padding: 0;
 
@@ -136,9 +136,10 @@ h1, h2, h3, h4, h5, h6 {
       display: flex;
       align-items: center;
 
-      padding: 0 $task-padding;
-      
-      line-height: $task-height;
+      height: $task-height;
+      min-height: 40px;
+      // margin: 0 10px;
+      padding: 0 10px;
       
       &__check {
         display: flex;
@@ -146,8 +147,14 @@ h1, h2, h3, h4, h5, h6 {
 
         // background-color: $primary-color;
         padding: 10px;
-      
+        
         font-size: calc(12px + 2vmin);
+        color: lighten($bg-color, 30%);
+        
+        svg {
+          width: $task-check-size;
+          height: $task-check-size;
+        }
       }
     
       &:not(:last-child) {
@@ -155,10 +162,6 @@ h1, h2, h3, h4, h5, h6 {
       }
     }
     
-    &__check {
-      color: lighten($bg-color, 30%);
-    }
-  
     &--completed {
   
       &__check {
@@ -167,6 +170,38 @@ h1, h2, h3, h4, h5, h6 {
       &__content {
         text-decoration: line-through;
       }
+    }
+  }
+  
+  .new-task {
+    &, &--expanded {
+      @extend .task;
+      background-color: lighten($bg-color, 20%);
+      overflow: hidden;
+      transition-duration: 0.3s;
+      
+      &__drag-handle {
+        @extend .task__check;
+
+        svg {
+          color: $bg-color;
+        }
+      }
+
+      input {
+        width: 100%;
+        background-color: transparent;
+        border: none;
+        border-bottom: 1px solid lighten($bg-color, 10%);
+
+        color: white;
+      }
+    }
+
+    & {
+      height: 0;
+      min-height: 0;
+      border-width: 0px !important;
     }
   }
   
@@ -186,21 +221,13 @@ h1, h2, h3, h4, h5, h6 {
 
 $task-data-bg-color: lighten($bg-color, 20%);
 .navbar {
-  &, &--expanded {
-    width: 100%;
-    height: 0;
-    background-color: $task-data-bg-color;
-    border-radius: 10px 10px 0 0;
-    
-    position: fixed;
-    bottom: $add-task-size + 20px;
-    
-    transition-duration: 0.2s;
-  }
-
-  &--expanded {
-    bottom: $add-task-size + 20px + 55px;
-  }
+  width: 100%;
+  height: 0;
+  background-color: $task-data-bg-color;
+  border-radius: 10px 10px 0 0;
+  
+  position: fixed;
+  bottom: 0;
   
   &__add-task {
     display: flex;
@@ -211,9 +238,8 @@ $task-data-bg-color: lighten($bg-color, 20%);
     height: $add-task-size;
     background-color: lighten($bg-color, 10%);
     border-radius: 50%;
-    margin-left: -$add-task-size / 2;
     margin: auto;
-    margin-bottom: 20px;
+    margin-top: -$add-task-size - 20px;
   
     font-size: $add-task-size / 1.4;
     color: $primary-color;
@@ -233,23 +259,23 @@ $task-data-bg-color: lighten($bg-color, 20%);
     }
   }
 
-  &__task-data {
-    &, &--expanded {
-      width: 100%;
-      background-color: $task-data-bg-color;
-      border-radius: 10px 10px 0 0;
-      padding: 10px;
+  // &__task-data {
+  //   &, &--expanded {
+  //     width: 100%;
+  //     background-color: $task-data-bg-color;
+  //     border-radius: 10px 10px 0 0;
+  //     padding: 10px;
       
-      // position: absolute;
-      // bottom: 0;
-      position: static;
-      // bottom: 100px;
+  //     // position: absolute;
+  //     // bottom: 0;
+  //     position: static;
+  //     // bottom: 100px;
 
-      overflow: hidden;
+  //     overflow: hidden;
       
-      input {
-        width: 100%;
-      }
-    }
-  }
+  //     input {
+  //       width: 100%;
+  //     }
+  //   }
+  // }
 }

@@ -1,76 +1,28 @@
 import React, { useState } from 'react';
-import * as firebase from 'firebase/app';
-import {
-  FaCheck,
-  FaChevronDown,
-  FaChevronUp,
-  FaRegCircle,
-} from 'react-icons/fa';
-import { useTasks } from '../hooks/useTasks';
-import { db } from '../firebase';
+import { MdDragHandle } from 'react-icons/md';
+import { ActiveTasks } from './ActiveTasks';
+import { CompletedTasks } from './CompletedTasks';
 
-export function Tasks() {
-  const { tasks, completedTasks } = useTasks();
-  const [showCompleted, setShowCompleted] = useState(false);
-
-  function completeTask(taskId) {
-    db.collection('tasks')
-      .doc(taskId)
-      .update({
-        completed: firebase.firestore.Timestamp.now(),
-      })
-      .catch(error => {
-        console.error('Error completing task: ', error);
-      });
-  }
-
-  function unsetCompleted(taskId) {
-    db.collection('tasks')
-      .doc(taskId)
-      .update({
-        completed: firebase.firestore.FieldValue.delete(),
-      })
-      .catch(error => {
-        console.error('Error completing task: ', error);
-      });
-  }
+export function Tasks({ showNewTask }) {
+  const [newTask, setNewTask] = useState('');
 
   return (
     <div className="tasks">
-      <ul className="tasks__list">
-        {tasks.map(task => (
-          <li className="task" key={task.id}>
-            <div className="task__check" onClick={() => completeTask(task.id)}>
-              <FaRegCircle />
-            </div>
-            <span className="task__content">{task.content}</span>
-          </li>
-        ))}
-      </ul>
-      <div
-        className="show-completed"
-        onClick={() => setShowCompleted(!showCompleted)}
-      >
-        <span>Completed ({completedTasks.length})</span>
-        {(showCompleted && (
-          <FaChevronUp className="show-completed__toggler" />
-        )) || <FaChevronDown className="show-completed__toggler" />}
+
+      <div className={'new-task' + (showNewTask ? '--expanded' : '')}>
+        <div className="new-task__drag-handle">
+          <MdDragHandle />
+        </div>
+        <input
+          type="text"
+          value={newTask}
+          onChange={e => setNewTask(e.target.value)}
+          placeholder="New task"
+        />
       </div>
-      {showCompleted && (
-        <ul className="tasks__list">
-          {completedTasks.map(task => (
-            <li className="task--completed" key={task.id}>
-              <div
-                className="task--completed__check"
-                onClick={() => unsetCompleted(task.id)}
-              >
-                <FaCheck />
-              </div>
-              <span className="task--completed__content">{task.content}</span>
-            </li>
-          ))}
-        </ul>
-      )}
+
+      <ActiveTasks />
+      <CompletedTasks />
     </div>
   );
 }
