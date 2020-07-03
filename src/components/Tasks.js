@@ -1,28 +1,17 @@
-import React, { useState } from 'react';
-import { MdDragHandle } from 'react-icons/md';
+import React from 'react';
+import { useTasks } from '../hooks';
+import { NewTask } from './NewTask';
 import { ActiveTasks } from './ActiveTasks';
 import { CompletedTasks } from './CompletedTasks';
 
-export function Tasks({ showNewTask }) {
-  const [newTask, setNewTask] = useState('');
+export function Tasks() {
+  const { activeTasks, completedTasks } = useTasks();
 
   return (
     <div className="tasks">
-
-      <div className={'new-task' + (showNewTask ? '--expanded' : '')}>
-        <div className="new-task__drag-handle">
-          <MdDragHandle />
-        </div>
-        <input
-          type="text"
-          value={newTask}
-          onChange={e => setNewTask(e.target.value)}
-          placeholder="New task"
-        />
-      </div>
-
-      <ActiveTasks />
-      <CompletedTasks />
+      <NewTask />
+      <ActiveTasks tasks={activeTasks} />
+      <CompletedTasks tasks={completedTasks} />
     </div>
   );
 }

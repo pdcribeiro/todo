@@ -1,18 +1,29 @@
 import React, { useState } from 'react';
 import './App.scss';
+import { useTasks } from './hooks';
+// import { Tasks } from './components/Tasks';
+import { NewTask } from './components/NewTask';
+import { ActiveTasks } from './components/ActiveTasks';
+import { CompletedTasks } from './components/CompletedTasks';
 import { Navbar } from './components/Navbar';
-import { Tasks } from './components/Tasks';
 
-function App() {
+export default function App() {
   const [showNewTask, setShowNewTask] = useState(false);
+  const { activeTasks, completedTasks } = useTasks();
 
   return (
     <div className="App">
       <h2 className="title">TODO</h2>
-      <Tasks showNewTask={showNewTask} />
-      <Navbar toggleNewTask={() => setShowNewTask(!showNewTask)} />
+      {/* <Tasks /> */}
+      <div className="tasks">
+        <NewTask
+          visible={showNewTask}
+          hide={() => showNewTask && setShowNewTask(false)}
+        />
+        <ActiveTasks tasks={activeTasks} />
+        <CompletedTasks tasks={completedTasks} />
+      </div>
+      <Navbar handleAddTask={() => !showNewTask && setShowNewTask(true)} />
     </div>
   );
 }
-
-export default App;

@@ -1,11 +1,10 @@
 import React from 'react';
 import * as firebase from 'firebase/app';
-import { useTasks } from '../hooks/useTasks';
 import { db } from '../firebase';
 import { FaRegCircle } from 'react-icons/fa';
+import { DeleteTask } from './DeleteTask';
 
-export function ActiveTasks() {
-  const { tasks } = useTasks();
+export function ActiveTasks({ tasks }) {
 
   function completeTask(taskId) {
     db.collection('tasks')
@@ -14,7 +13,7 @@ export function ActiveTasks() {
         completed: firebase.firestore.Timestamp.now(),
       })
       .catch(error => {
-        console.error('Error completing task: ', error);
+        console.error('Failed to set task completed: ', error);
       });
   }
 
@@ -26,8 +25,10 @@ export function ActiveTasks() {
           <div className="task__check" onClick={() => completeTask(task.id)}>
             <FaRegCircle />
           </div>
-          
+
           <span className="task__content">{task.content}</span>
+          
+          <DeleteTask id={task.id} />
         </li>
       ))}
     </ul>

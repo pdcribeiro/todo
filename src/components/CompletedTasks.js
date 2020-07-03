@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import * as firebase from 'firebase/app';
-import { useTasks } from '../hooks/useTasks';
 import { db } from '../firebase';
-import { FaCheck, FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { FaChevronUp, FaChevronDown, FaCheck } from 'react-icons/fa';
+import { DeleteTask } from './DeleteTask';
 
-export function CompletedTasks() {
+export function CompletedTasks({ tasks }) {
   const [showCompleted, setShowCompleted] = useState(false);
-  const { completedTasks } = useTasks();
 
   function unsetCompleted(taskId) {
     db.collection('tasks')
@@ -15,7 +14,7 @@ export function CompletedTasks() {
         completed: firebase.firestore.FieldValue.delete(),
       })
       .catch(error => {
-        console.error('Error completing task: ', error);
+        console.error('Failed to set task active: ', error);
       });
   }
 
@@ -25,7 +24,7 @@ export function CompletedTasks() {
         className="show-completed"
         onClick={() => setShowCompleted(!showCompleted)}
       >
-        <span>Completed ({completedTasks.length})</span>
+        <span>Completed ({tasks.length})</span>
         {(showCompleted && (
           <FaChevronUp className="show-completed__toggler" />
         )) || <FaChevronDown className="show-completed__toggler" />}
@@ -33,8 +32,9 @@ export function CompletedTasks() {
 
       {showCompleted && (
         <ul className="tasks__list">
-          {completedTasks.map(task => (
+          {tasks.map(task => (
             <li className="task--completed" key={task.id}>
+
               <div
                 className="task--completed__check"
                 onClick={() => unsetCompleted(task.id)}
@@ -43,6 +43,8 @@ export function CompletedTasks() {
               </div>
 
               <span className="task--completed__content">{task.content}</span>
+
+              <DeleteTask id={task.id} />
             </li>
           ))}
         </ul>

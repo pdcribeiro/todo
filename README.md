@@ -1,4 +1,4 @@
-# todo
+# TODO
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
@@ -72,7 +72,25 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/tr
 
 ## TODO
 
-* Add task
-* Delete task
+* Define goals and times
 
-* ? Drop add button where you want to add
+* Add task
+    * Save button?
+    * Click again on add task button?
+
+* Delete task
+    * Slide left/right (touch only)
+* Complete task by sliding left/right
+* Double click to edit task content?
+* Refactor: create Task component and pass active={true} for ActiveTasks and false for CompletedTasks
+* Reorder tasks
+    * How to define task order?
+        * Array of task ids?
+    * Click and hold
+    * Drag handle?
+        * For large screens only?
+        * Show on hover? (desktop only)
+    * Option to show/hide drag handle?
+* Allow drag new task to its place
+    * If using drag handle, handle blur into drag handle
+* User authentication and task filtering
