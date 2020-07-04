@@ -14,15 +14,20 @@ export default function App() {
   return (
     <div className="App">
       <h2 className="title">TODO</h2>
-      {/* <Tasks /> */}
-      <div className="tasks">
-        <NewTask
-          visible={showNewTask}
-          hide={() => showNewTask && setShowNewTask(false)}
-        />
-        <ActiveTasks tasks={activeTasks} />
-        <CompletedTasks tasks={completedTasks} />
-      </div>
+      {activeTasks === null || completedTasks === null ? (
+        <div className="loading">
+          <div className="spinner"></div>
+        </div>
+      ) : (
+        <div className="tasks">
+          <NewTask
+            visible={showNewTask}
+            hide={() => showNewTask && setShowNewTask(false)}
+          />
+          <ActiveTasks tasks={activeTasks} />
+          <CompletedTasks tasks={completedTasks} />
+        </div>
+      )}
       <Navbar handleAddTask={() => !showNewTask && setShowNewTask(true)} />
     </div>
   );

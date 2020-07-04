@@ -1,11 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as firebase from 'firebase/app';
 import { db } from '../firebase';
-import { FaChevronUp, FaChevronDown, FaCheck } from 'react-icons/fa';
-import { DeleteTask } from './DeleteTask';
+import { FaChevronUp, FaChevronDown } from 'react-icons/fa';
+import { Task } from './Task';
 
 export function CompletedTasks({ tasks }) {
   const [showCompleted, setShowCompleted] = useState(false);
+
+  useEffect(() => {
+    if (showCompleted) {
+      window.scrollBy({
+        top: 200,
+        behavior: 'smooth',
+      });
+    }
+  }, [showCompleted]);
 
   function unsetCompleted(taskId) {
     db.collection('tasks')
@@ -25,27 +34,21 @@ export function CompletedTasks({ tasks }) {
         onClick={() => setShowCompleted(!showCompleted)}
       >
         <span>Completed ({tasks.length})</span>
-        {(showCompleted && (
+        {showCompleted ? (
           <FaChevronUp className="show-completed__toggler" />
-        )) || <FaChevronDown className="show-completed__toggler" />}
+        ) : (
+          <FaChevronDown className="show-completed__toggler" />
+        )}
       </div>
 
       {showCompleted && (
         <ul className="tasks__list">
           {tasks.map(task => (
-            <li className="task--completed" key={task.id}>
-
-              <div
-                className="task--completed__check"
-                onClick={() => unsetCompleted(task.id)}
-              >
-                <FaCheck />
-              </div>
-
-              <span className="task--completed__content">{task.content}</span>
-
-              <DeleteTask id={task.id} />
-            </li>
+            <Task
+              task={task}
+              handleClick={() => unsetCompleted(task.id)}
+              key={task.id}
+            />
           ))}
         </ul>
       )}

@@ -46,18 +46,16 @@
   src: url('reef-webfont.woff'), url('reef-webfont.woff') format('woff');
 } */
 
-
 // Variables
 
 $bg-color: #282c34;
 $primary-color: #61dafb;
 $medium-font-size: calc(10px + 2vmin);
 
+$spinner-size: calc(60px + 2vmin);
 $task-height: 10vh;
-$task-border: 1px solid lighten($bg-color, 10%);
 $task-check-size: 20px;
 $add-task-size: 50px;
-
 
 // Mixins
 
@@ -89,57 +87,117 @@ $breakpoints: (sm: 576px, md: 768px, lg: 992px, xl: 1200px);
   }
 }
 
-
 html {
   box-sizing: border-box;
+  background-color: $bg-color;
 
-  *, *::after, *::before {
+  *,
+  *::after,
+  *::before {
     box-sizing: inherit;
   }
-  
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     margin: 0;
     padding: 0;
   }
 }
 
-
 .App {
-  height: 100vh;
-  background-color: $bg-color;
-  
+  // height: 100vh;
+
   font-size: $medium-font-size;
   font-family: 'Quicksand', sans-serif;
   color: white;
+  overflow-x: hidden;
   overflow-y: auto;
 
   .title {
     padding: 10px 0;
-  
+
     font-size: calc(26px + 2vmin);
     font-weight: normal;
     text-align: center;
   }
 }
 
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+  opacity: 0.6;
+
+  position: absolute;
+  top: 0;
+
+  .spinner {
+    width: $spinner-size;
+    height: $spinner-size;
+    background-color: $primary-color;
+    border-radius: 50%;
+
+    position: relative;
+    
+    animation: spinner infinite 0.5s linear;
+    
+    &::before {
+      content: '';
+      @extend .spinner;
+      transform: scale(0.75);
+      background-color: $bg-color;
+      // background-color: red;
+
+      position: absolute;
+      animation: none;
+    }
+    &::after {
+      content: '';
+      @extend .spinner::before;
+      transform: scale(0.6, 0.4);
+      // background-color: green;
+      border-radius: 0;
+      margin-top: 35%;
+    }
+    
+    @keyframes spinner {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  }
+}
+
 .tasks {
-  
   &__list {
     margin: 0;
     padding: 0;
 
     list-style: none;
   }
-  
+
   .task {
-    &, &--completed {
+    &,
+    &--completed {
       display: flex;
       align-items: center;
 
+      width: 100%;
       height: $task-height;
       min-height: 50px;
       // margin: 0 10px;
       padding: 0 10px;
+
+      position: relative;
       
       &__check {
         display: flex;
@@ -147,10 +205,10 @@ html {
 
         // background-color: $primary-color;
         padding: 10px;
-        
+
         font-size: calc(12px + 2vmin);
         color: lighten($bg-color, 30%);
-        
+
         svg {
           width: $task-check-size;
           height: $task-check-size;
@@ -160,30 +218,66 @@ html {
       &:hover .delete-task {
         opacity: 1;
       }
-    
+
+      &__before {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        // background-color: $primary-color;
+        // opacity: 0.6;
+        // background-color: desaturate($primary-color, 50%);
+        background-color: darken($primary-color, 30%);
+        
+        position: absolute;
+        left: -100%;
+
+        svg {
+          display: block;
+          width: $task-check-size;
+          height: $task-check-size;
+          margin-right: 30px;
+          margin-left: auto;
+          color: $bg-color;
+        }
+      }
+      &__after {
+        @extend .task__before;
+        background-color: lighten($bg-color, 30%);
+        left: 100%;
+
+        svg {
+          margin-right: auto;
+          margin-left: 30px;
+        }
+      }
+
       &:not(:last-child) {
-        border-bottom: $task-border;
+        border-bottom: 1px solid lighten($bg-color, 10%);
       }
     }
-    
+
     &--completed {
-  
       &__check {
         color: darken($primary-color, 40%);
+        // color: $primary-color;
+        // opacity: 0.6;
+        // color: darken(desaturate($primary-color, 50%), 30%);
       }
       &__content {
         text-decoration: line-through;
       }
     }
   }
-  
+
   .new-task {
-    &, &--expanded {
+    &,
+    &--expanded {
       @extend .task;
       background-color: lighten($bg-color, 20%);
       overflow: hidden;
       transition-duration: 0.3s;
-      
+
       &__drag-handle {
         @extend .task__check;
 
@@ -211,7 +305,7 @@ html {
 
   .delete-task {
     @extend .task__check;
-    // display: none;
+    display: none;
     opacity: 0;
     margin-left: auto;
     transition-duration: 0.5s;
@@ -220,78 +314,51 @@ html {
       display: flex;
     }
   }
-  
+
   .show-completed {
     @extend .task;
-    justify-content: space-between;
-    // border-top: $task-border;
-    // border-bottom: none;
-    // margin-top: 20px;
     padding: 0 20px;
-    
+
     &__toggler {
       float: right;
     }
   }
 }
 
-$task-data-bg-color: lighten($bg-color, 20%);
 .navbar {
   width: 100%;
   height: 0;
-  background-color: $task-data-bg-color;
-  border-radius: 10px 10px 0 0;
-  
+
   position: fixed;
   bottom: 0;
-  
+
   &__add-task {
     display: flex;
     justify-content: center;
     align-items: center;
-    
+
     width: $add-task-size;
     height: $add-task-size;
     background-color: lighten($bg-color, 10%);
     border-radius: 50%;
     margin: auto;
     margin-top: -$add-task-size - 20px;
-  
+
     font-size: $add-task-size / 1.4;
     color: $primary-color;
-    
+
     transition-duration: 0.3s;
-    
+
     @include media-break-lg {
       &:hover {
-        box-shadow: 0 0 5px 1px lighten($bg-color, 40%);
+        transform: scale(1.1);
       }
     }
-  
+
     &:active {
       transform: scale(0.9);
-      background-color: lighten($bg-color, 8%);
+      background-color: lighten($bg-color, 5%);
       transition-duration: 0s;
     }
   }
-
-  // &__task-data {
-  //   &, &--expanded {
-  //     width: 100%;
-  //     background-color: $task-data-bg-color;
-  //     border-radius: 10px 10px 0 0;
-  //     padding: 10px;
-      
-  //     // position: absolute;
-  //     // bottom: 0;
-  //     position: static;
-  //     // bottom: 100px;
-
-  //     overflow: hidden;
-      
-  //     input {
-  //       width: 100%;
-  //     }
-  //   }
-  // }
 }

@@ -4,7 +4,7 @@ import { db } from '../firebase';
 import { MdDragHandle } from 'react-icons/md';
 
 export function NewTask({ visible, hide }) {
-
+  const [saving, setSaving] = useState(false);
   const [newTask, setNewTask] = useState('');
   const inputEl = useRef(null);
 
@@ -16,22 +16,27 @@ export function NewTask({ visible, hide }) {
     }
   }, [visible]);
 
-  function handleKeyDown(event) {
-    // if (event.key === 'Enter') {
-    if (event.keyCode === 13) {
-      event.persist();
+  function save() {
+    if (saving) return;
+
+    if (newTask !== '') {
+      setSaving(true);
       db.collection('tasks')
         .add({
           content: newTask,
           created: firebase.firestore.Timestamp.now(),
         })
         .then(() => {
-          hide();
+          setNewTask('');
         })
         .catch(error => {
           console.error('Error creating task: ', error);
+        })
+        .finally(() => {
+          setSaving(false);
         });
     }
+    hide();
   }
 
   return (
@@ -44,8 +49,8 @@ export function NewTask({ visible, hide }) {
         ref={inputEl}
         value={newTask}
         onChange={e => setNewTask(e.target.value)}
-        onKeyDown={handleKeyDown}
-        onBlur={hide}
+        onKeyDown={e => e.keyCode === 13 && save()}
+        onBlur={save}
         placeholder="New task"
       />
     </div>

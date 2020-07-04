@@ -74,14 +74,15 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/tr
 
 * Define goals and times
 
-* Add task
-    * Save button?
-    * Click again on add task button?
+* Edit tasks
 
-* Delete task
-    * Slide left/right (touch only)
-* Complete task by sliding left/right
-* Double click to edit task content?
+Sliding
+* Render 'before' and 'after' elements until 'main' element reaches initial position
+* Prevent scrolling when sliding
+* Handle sliding outside of element
+* Handle stop sliding when out of page
+
+* Click to edit task content?
 * Refactor: create Task component and pass active={true} for ActiveTasks and false for CompletedTasks
 * Reorder tasks
     * How to define task order?
@@ -94,3 +95,12 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/tr
 * Allow drag new task to its place
     * If using drag handle, handle blur into drag handle
 * User authentication and task filtering
+
+Options
+* Switch sliding direction?
+    * Which direction do right-handed people prefer as primary direction
+* Enable/disable delete button
+* Add task
+    * Save button?
+    * Click again on add task button?
+    * Ignore blur into add task button

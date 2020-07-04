@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { db } from '../firebase';
 
 export function useTasks() {
-  const [activeTasks, setActiveTasks] = useState([]);
-  const [completedTasks, setCompletedTasks] = useState([]);
+
+  const [activeTasks, setActiveTasks] = useState(null);
+  const [completedTasks, setCompletedTasks] = useState(null);
 
   useEffect(() => {
     console.log('using effect...');

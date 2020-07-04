@@ -1,11 +1,9 @@
 import React from 'react';
 import * as firebase from 'firebase/app';
 import { db } from '../firebase';
-import { FaRegCircle } from 'react-icons/fa';
-import { DeleteTask } from './DeleteTask';
+import { Task } from './Task';
 
 export function ActiveTasks({ tasks }) {
-
   function completeTask(taskId) {
     db.collection('tasks')
       .doc(taskId)
@@ -20,16 +18,11 @@ export function ActiveTasks({ tasks }) {
   return (
     <ul className="tasks__list">
       {tasks.map(task => (
-        <li className="task" key={task.id}>
-
-          <div className="task__check" onClick={() => completeTask(task.id)}>
-            <FaRegCircle />
-          </div>
-
-          <span className="task__content">{task.content}</span>
-          
-          <DeleteTask id={task.id} />
-        </li>
+        <Task
+          task={task}
+          handleClick={() => completeTask(task.id)}
+          key={task.id}
+        />
       ))}
     </ul>
   );
