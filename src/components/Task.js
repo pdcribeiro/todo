@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { db } from '../firebase';
+import { TaskEditor } from './TaskEditor';
 import { FaCheck, FaRegCircle, FaTimes } from 'react-icons/fa';
 
 const DRAG_BACK_SECS = 0.5;
 const MIN_DRAG = 100;
 
 export function Task({ task, handleClick }) {
+  const [editing, setEditing] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [initialPosition, setInitialPosition] = useState(null);
   const [position, setPosition] = useState(0);
@@ -26,10 +28,8 @@ export function Task({ task, handleClick }) {
   function handleTouchEnd() {
     if (Math.abs(position) > MIN_DRAG) {
       if (position > 0) {
-        console.log('completing...');
         handleClick();
       } else {
-        console.log('deleting...');
         deleteTask();
       }
     }
@@ -53,7 +53,7 @@ export function Task({ task, handleClick }) {
 
   useEffect(() => {
     function handleScroll(event) {
-      console.log(event);
+      alert(event);
       if (dragging) event.preventDefault();
     }
 
@@ -61,6 +61,10 @@ export function Task({ task, handleClick }) {
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, [dragging]);
+
+  if (editing) {
+    return <TaskEditor task={task} blur={() => setEditing(false)} />;
+  }
 
   const cssModifier = task.completed ? '--completed' : '';
   return (
@@ -70,6 +74,7 @@ export function Task({ task, handleClick }) {
         left: position + 'px',
         ...(!dragging && { transition: `left ${DRAG_BACK_SECS}s` }),
       }}
+      onClick={() => setEditing(true)}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}

@@ -3,31 +3,31 @@ import * as firebase from 'firebase/app';
 import { db } from '../firebase';
 import { MdDragHandle } from 'react-icons/md';
 
-export function NewTask({ visible, hide }) {
-  const [saving, setSaving] = useState(false);
-  const [newTask, setNewTask] = useState('');
+export function TaskEditor({ task, blur, visible, hide }) {
   const inputEl = useRef(null);
+  const [taskContent, setTaskContent] = useState('');
+  const [saving, setSaving] = useState(false);
 
+  // Focus on render when editing and focus/blur on show/hide when creating.
   useEffect(() => {
-    if (visible) {
+    if (task || visible) {
       inputEl.current.focus();
     } else {
       inputEl.current.blur();
     }
+    return () => blur?.();
   }, [visible]);
 
   function save() {
-    if (saving) return;
-
-    if (newTask !== '') {
+    if (taskContent !== '') {
       setSaving(true);
       db.collection('tasks')
         .add({
-          content: newTask,
+          content: taskContent,
           created: firebase.firestore.Timestamp.now(),
         })
         .then(() => {
-          setNewTask('');
+          setTaskContent('');
         })
         .catch(error => {
           console.error('Error creating task: ', error);
@@ -39,19 +39,20 @@ export function NewTask({ visible, hide }) {
     hide();
   }
 
+  const cssModifier = task ? '--editing' : visible ? '--expanded' : '';
   return (
-    <div className={'new-task' + (visible ? '--expanded' : '')}>
-      <div className="new-task__drag-handle">
+    <div className={`task-editor${cssModifier}`}>
+      <div className={`task-editor${cssModifier}__drag-handle`}>
         <MdDragHandle />
       </div>
       <input
         type="text"
         ref={inputEl}
-        value={newTask}
-        onChange={e => setNewTask(e.target.value)}
-        onKeyDown={e => e.keyCode === 13 && save()}
-        onBlur={save}
-        placeholder="New task"
+        value={taskContent}
+        onChange={e => setTaskContent(e.target.value)}
+        onKeyDown={e => e.keyCode === 13 && !saving && save()}
+        onBlur={!saving && save}
+        placeholder={task ? 'Task content' : 'New task'}
       />
     </div>
   );

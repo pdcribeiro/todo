@@ -72,9 +72,13 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/tr
 
 ## TODO
 
-* Define goals and times
+WIP goals and times
+* 30 min to edit tasks
+
 
 * Edit tasks
+    * Click to edit task content?
+    * Restore task content on enter press
 
 Sliding
 * Render 'before' and 'after' elements until 'main' element reaches initial position
@@ -82,21 +86,24 @@ Sliding
 * Handle sliding outside of element
 * Handle stop sliding when out of page
 
-* Click to edit task content?
-* Refactor: create Task component and pass active={true} for ActiveTasks and false for CompletedTasks
-* Reorder tasks
-    * How to define task order?
-        * Array of task ids?
-    * Click and hold
-    * Drag handle?
-        * For large screens only?
-        * Show on hover? (desktop only)
-    * Option to show/hide drag handle?
-* Allow drag new task to its place
+Order tasks
+* How to define task order?
+    * Array of task ids?
+* Click and hold
+* Drag handle?
+    * For large screens only?
+    * Show on hover? (desktop only)
+* Option to show/hide drag handle?
+* Drag new task to its place
     * If using drag handle, handle blur into drag handle
-* User authentication and task filtering
 
-Options
+Authentication
+* Firebase auth
+* User auth
+    * Register/login/logout
+    * Task filtering
+
+Settings
 * Switch sliding direction?
     * Which direction do right-handed people prefer as primary direction
 * Enable/disable delete button
@@ -104,3 +111,7 @@ Options
     * Save button?
     * Click again on add task button?
     * Ignore blur into add task button
+* Order by date
+    * By created date
+    * By target date
+        * Tasks with no date at top/bottom

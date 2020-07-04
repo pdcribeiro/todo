@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './App.scss';
 import { useTasks } from './hooks';
 // import { Tasks } from './components/Tasks';
-import { NewTask } from './components/NewTask';
+import { TaskEditor } from './components/TaskEditor';
 import { ActiveTasks } from './components/ActiveTasks';
 import { CompletedTasks } from './components/CompletedTasks';
 import { Navbar } from './components/Navbar';
@@ -20,7 +20,7 @@ export default function App() {
         </div>
       ) : (
         <div className="tasks">
-          <NewTask
+          <TaskEditor
             visible={showNewTask}
             hide={() => showNewTask && setShowNewTask(false)}
           />
