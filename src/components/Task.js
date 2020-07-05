@@ -53,8 +53,8 @@ export function Task({ task, handleClick }) {
 
   useEffect(() => {
     function handleScroll(event) {
-      alert(event);
       if (dragging) event.preventDefault();
+      // if (dragging) event.stopPropagation();
     }
 
     window.addEventListener('scroll', handleScroll);
@@ -63,7 +63,7 @@ export function Task({ task, handleClick }) {
   }, [dragging]);
 
   if (editing) {
-    return <TaskEditor task={task} blur={() => setEditing(false)} />;
+    return <TaskEditor task={task} finish={() => setEditing(false)} />;
   }
 
   const cssModifier = task.completed ? '--completed' : '';

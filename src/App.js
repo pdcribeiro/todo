@@ -21,8 +21,8 @@ export default function App() {
       ) : (
         <div className="tasks">
           <TaskEditor
-            visible={showNewTask}
-            hide={() => showNewTask && setShowNewTask(false)}
+            expanded={showNewTask}
+            finish={() => showNewTask && setShowNewTask(false)}
           />
           <ActiveTasks tasks={activeTasks} />
           <CompletedTasks tasks={completedTasks} />

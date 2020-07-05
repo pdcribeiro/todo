@@ -73,12 +73,12 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/tr
 ## TODO
 
 WIP goals and times
-* 30 min to edit tasks
+* 10 min to edit tasks
 
 
 * Edit tasks
     * Click to edit task content?
-    * Restore task content on enter press
+    * Restore original content on enter press when empty
 
 Sliding
 * Render 'before' and 'after' elements until 'main' element reaches initial position

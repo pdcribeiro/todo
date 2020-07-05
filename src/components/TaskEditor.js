@@ -3,43 +3,59 @@ import * as firebase from 'firebase/app';
 import { db } from '../firebase';
 import { MdDragHandle } from 'react-icons/md';
 
-export function TaskEditor({ task, blur, visible, hide }) {
+export function TaskEditor({ task, expanded, finish }) {
   const inputEl = useRef(null);
   const [taskContent, setTaskContent] = useState('');
   const [saving, setSaving] = useState(false);
 
   // Focus on render when editing and focus/blur on show/hide when creating.
   useEffect(() => {
-    if (task || visible) {
+    if (task) {
+      setTaskContent(task.content);
+      inputEl.current.focus();
+    } else if (expanded) {
       inputEl.current.focus();
     } else {
       inputEl.current.blur();
     }
-    return () => blur?.();
-  }, [visible]);
+    return () => finish?.();
+  }, [expanded]);
 
   function save() {
     if (taskContent !== '') {
-      setSaving(true);
-      db.collection('tasks')
-        .add({
-          content: taskContent,
-          created: firebase.firestore.Timestamp.now(),
-        })
-        .then(() => {
-          setTaskContent('');
-        })
-        .catch(error => {
-          console.error('Error creating task: ', error);
-        })
-        .finally(() => {
-          setSaving(false);
-        });
+      if (task) {
+      } else {
+        setSaving(true);
+        (task ? update() : create())
+          .then(() => {
+            setTaskContent('');
+          })
+          .catch(error => {
+            console.error(
+              `Error ${task ? 'updating' : 'creating'} task: `,
+              error
+            );
+          })
+          .finally(() => {
+            setSaving(false);
+          });
+      }
     }
-    hide();
+    finish();
   }
 
-  const cssModifier = task ? '--editing' : visible ? '--expanded' : '';
+  function update() {
+    return db.collection('tasks').doc(task.id).update({ content: taskContent });
+  }
+
+  function create() {
+    return db.collection('tasks').add({
+      content: taskContent,
+      created: firebase.firestore.Timestamp.now(),
+    });
+  }
+
+  const cssModifier = task ? '--editing' : expanded ? '--expanded' : '';
   return (
     <div className={`task-editor${cssModifier}`}>
       <div className={`task-editor${cssModifier}__drag-handle`}>
