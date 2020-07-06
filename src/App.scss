@@ -177,7 +177,7 @@ html {
 }
 
 .tasks {
-  &__list {
+  .task-list {
     margin: 0;
     padding: 0;
 
@@ -195,6 +195,7 @@ html {
       min-height: 50px;
       // margin: 0 10px;
       padding: 0 10px;
+      background-color: $bg-color;
 
       position: relative;
 

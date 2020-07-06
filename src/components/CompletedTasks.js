@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import * as firebase from 'firebase/app';
 import { db } from '../firebase';
 import { FaChevronUp, FaChevronDown } from 'react-icons/fa';
-import { Task } from './Task';
+import { TaskList } from './TaskList';
 
 export function CompletedTasks({ tasks }) {
-  
   const [showCompleted, setShowCompleted] = useState(false);
 
   useEffect(() => {
@@ -41,18 +40,8 @@ export function CompletedTasks({ tasks }) {
           <FaChevronDown className="show-completed__toggler" />
         )}
       </div>
-
-      {showCompleted && (
-        <ul className="tasks__list">
-          {tasks.map(task => (
-            <Task
-              task={task}
-              handleClick={() => unsetCompleted(task.id)}
-              key={task.id}
-            />
-          ))}
-        </ul>
-      )}
+      
+      {showCompleted && <TaskList tasks={tasks} handleMark={unsetCompleted} />}
     </>
   );
 }

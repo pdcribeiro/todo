@@ -73,16 +73,19 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/tr
 ## TODO
 
 WIP goals and times
-* 
+* 30 min | feat: start order tasks
 
 
 Order tasks
-* Click and hold
-* Drag handle?
-    * For large screens only?
-    * Show on hover? (desktop only)
+* Reorder existing tasks
+    * Shift tasks
+    * Update order in db
+    * Handle drag outside of task element
+* Delete task
 * Drag new task to its place
     * If using drag handle, handle blur into drag handle
+
+* useReducer in Task? Or use object as state.
 
 Authentication
 * Firebase auth

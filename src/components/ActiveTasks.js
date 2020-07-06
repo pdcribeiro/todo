@@ -1,7 +1,7 @@
 import React from 'react';
 import * as firebase from 'firebase/app';
 import { db } from '../firebase';
-import { Task } from './Task';
+import { TaskList } from './TaskList';
 
 export function ActiveTasks({ tasks }) {
   
@@ -16,15 +16,5 @@ export function ActiveTasks({ tasks }) {
       });
   }
 
-  return (
-    <ul className="tasks__list">
-      {tasks.map(task => (
-        <Task
-          task={task}
-          handleClick={() => completeTask(task.id)}
-          key={task.id}
-        />
-      ))}
-    </ul>
-  );
+  return <TaskList tasks={tasks} handleMark={completeTask} />;
 }

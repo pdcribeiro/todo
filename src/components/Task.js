@@ -1,62 +1,113 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
 import { TaskEditor } from './TaskEditor';
 import { FaCheck, FaRegCircle, FaTimes } from 'react-icons/fa';
 
 const DRAG_BACK_SECS = 0.5;
-const MIN_DRAG = 100;
-const MIN_SCROLL = 10;
+const MIN_SWIPE = 100;
+const MAX_START_DRAG = 50;
 
-export function Task({ task, handleClick }) {
-  const [editing, setEditing] = useState(false);
-  const [scrolling, setScrolling] = useState(false);
+export function Task({ task, handleMark }) {
+  let scrolling = false;
+  const [swiping, setSwiping] = useState(false);
+  const [initialPosition, setInitialPosition] = useState(null);
+  const [positionX, setPositionX] = useState(0);
+  const [unswiping, setUnswiping] = useState(false);
+  let dragTimer = null;
   const [dragging, setDragging] = useState(false);
-  const [restoring, setRestoring] = useState(false);
-  const [initialTouch, setInitialTouch] = useState(null);
-  const [position, setPosition] = useState(0);
-  const thisEl = useRef(null);
+  const [positionY, setPositionY] = useState(0);
+
+  useEffect(() => {
+    if (swiping) {
+      document.documentElement.style.overflow = 'hidden';
+    } else {
+      document.documentElement.style.overflow = 'auto';
+    }
+
+    // function handleScroll() {
+    //   const docEl = document.documentElement;
+    //   // if (swiping) alert(docEl.scrollTop);
+    //   if (swiping) docEl.scrollTo(0, docEl.scrollTop);
+    // }
+
+    // window.addEventListener('scroll', handleScroll);
+
+    // return () => window.removeEventListener('scroll', handleScroll);
+  }, [swiping]);
 
   function handleTouchStart(event) {
-    setInitialTouch(event.touches[0]);
+    handleMouseDown(event.touches[0]);
+  }
+  function handleMouseDown(event) {
+    setInitialPosition({ x: event.pageX, y: event.pageY });
+    
+    dragTimer = setTimeout(() => {
+      setDragging(true);
+    }, 500);
   }
 
   function handleTouchMove(event) {
     const touch = event.touches[0];
-    const offsetX = touch.pageX - initialTouch.pageX;
+    const offsetX = touch.pageX - initialPosition.x;
+    const offsetY = touch.pageY - initialPosition.y;
     if (dragging) {
+      setPositionY(Math.trunc(offsetY));
+    } else if (swiping) {
       event.preventDefault();
       const newPosition = Math.trunc(offsetX);
-      setPosition(newPosition);
-    } else if (!scrolling) {
-      if (Math.abs(offsetX) > Math.abs(touch.pageY - initialTouch.pageY)) {
-        setDragging(true);
-      } else {
-        setScrolling(true);
+      setPositionX(newPosition);
+    } else {
+      const absOffsetX = Math.abs(offsetX);
+      const absOffsetY = Math.abs(offsetY);
+      checkDragBounds(absOffsetX, absOffsetY);
+      if (!scrolling) {
+        if (absOffsetX > absOffsetY) {
+          setSwiping(true);
+        } else {
+          scrolling = true;
+        }
       }
+    }
+  }
+  function checkDragBounds(absOffsetX, absOffsetY) {
+    if (Math.max(absOffsetX, absOffsetY) > MAX_START_DRAG)
+      clearTimeout(dragTimer);
+  }
+  function handleMouseMove(event) {
+    if (initialPosition === null) return;
+    const offsetY = event.pageY - initialPosition.y;
+    if (dragging) {
+      setPositionY(Math.trunc(offsetY));
+    } else {
+      const absOffsetX = Math.abs(event.pageX - initialPosition.x);
+      const absOffsetY = Math.abs(offsetY);
+      checkDragBounds(absOffsetX, absOffsetY);
     }
   }
 
   function handleTouchEnd() {
-    if (Math.abs(position) > MIN_DRAG) {
-      if (position > 0) {
+    if (scrolling) {
+      scrolling = false;
+    } else if (swiping) {
+      handleSwipe();
+    } else if (dragging) {
+      endDrag();
+    }
+  }
+  function handleSwipe() {
+    if (Math.abs(positionX) > MIN_SWIPE) {
+      if (positionX > 0) {
         handleClick();
       } else {
         deleteTask();
       }
     } else {
-      setRestoring(true);
-      setTimeout(() => setRestoring(false), 1000);
+      setUnswiping(true);
+      setTimeout(() => setUnswiping(false), 1000);
     }
-    setScrolling(false);
-    setDragging(false);
-    setPosition(0);
+    setSwiping(false);
+    setPositionX(0);
   }
-
-  function preHandleClick(event) {
-    event.stopPropagation();
-    handleClick();
-  }
-
   function deleteTask() {
     db.collection('tasks')
       .doc(task.id)
@@ -65,24 +116,26 @@ export function Task({ task, handleClick }) {
         console.error('Failed to delete task: ', error);
       });
   }
+  function endDrag() {
+    console.log('hold or drag stopped');
+    clearTimeout(dragTimer);
+    setDragging(false);
+  }
 
-  useEffect(() => {
+  function handleClick() {
     if (dragging) {
-      document.documentElement.style.overflow = 'hidden';
+      endDrag();
     } else {
-      document.documentElement.style.overflow = 'auto';
+      setEditing(true);
     }
+  }
 
-    // function handleScroll() {
-    //   const docEl = document.documentElement;
-    //   // if (dragging) alert(docEl.scrollTop);
-    //   if (dragging) docEl.scrollTo(0, docEl.scrollTop);
-    // }
+  function preHandleMark(event) {
+    event.stopPropagation();
+    handleClick();
+  }
 
-    // window.addEventListener('scroll', handleScroll);
-
-    // return () => window.removeEventListener('scroll', handleScroll);
-  }, [dragging]);
+  const [editing, setEditing] = useState(false);
 
   if (editing) {
     return <TaskEditor task={task} finish={() => setEditing(false)} />;
@@ -93,25 +146,25 @@ export function Task({ task, handleClick }) {
     <li
       className={`task${cssModifier}`}
       style={{
-        left: position + 'px',
-        ...(!dragging && { transition: `left ${DRAG_BACK_SECS}s` }),
+        left: positionX + 'px',
+        ...(unswiping && { transition: `left ${DRAG_BACK_SECS}s` }),
+        top: positionY + 'px',
+        ...(dragging && {borderBottom: 'none', zIndex: 10}), 
       }}
-      onClick={() => setEditing(true)}
-      // onMouseDown={e => handleTouchStart({touches: [{pageX: e.pageX, pageY: e.pageY}]})}
-      // onMouseMove={e => handleTouchMove({touches: [{pageX: e.pageX, pageY: e.pageY}]})}
-      // onMouseUp={handleTouchEnd}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
-      ref={thisEl}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onClick={handleClick}
     >
-      {(dragging || restoring) && position >= 0 && (
+      {(swiping || unswiping) && positionX >= 0 && (
         <div className={`task${cssModifier}__before`}>
           {task.completed ? <FaRegCircle /> : <FaCheck />}
         </div>
       )}
 
-      <div className={`task${cssModifier}__check`} onClick={preHandleClick}>
+      <div className={`task${cssModifier}__check`} onClick={preHandleMark}>
         {task.completed ? <FaCheck /> : <FaRegCircle />}
       </div>
 
@@ -121,7 +174,7 @@ export function Task({ task, handleClick }) {
         <FaTimes />
       </div>
 
-      {(dragging || restoring) && position <= 0 && (
+      {(swiping || unswiping) && positionX <= 0 && (
         <div className={`task${cssModifier}__after`}>
           <FaTimes />
         </div>
