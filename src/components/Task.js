@@ -5,40 +5,49 @@ import { FaCheck, FaRegCircle, FaTimes } from 'react-icons/fa';
 
 const DRAG_BACK_SECS = 0.5;
 const MIN_DRAG = 100;
+const MIN_SCROLL = 10;
 
 export function Task({ task, handleClick }) {
-  
   const [editing, setEditing] = useState(false);
+  const [scrolling, setScrolling] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [restoring, setRestoring] = useState(false);
-  const [initialPosition, setInitialPosition] = useState(null);
+  const [initialTouch, setInitialTouch] = useState(null);
   const [position, setPosition] = useState(0);
   const thisEl = useRef(null);
 
   function handleTouchStart(event) {
-    setInitialPosition(event.touches[0].pageX);
-    setDragging(true);
+    setInitialTouch(event.touches[0]);
   }
 
   function handleTouchMove(event) {
+    const touch = event.touches[0];
+    const offsetX = touch.pageX - initialTouch.pageX;
     if (dragging) {
-      const newPosition = Math.trunc(event.touches[0].pageX - initialPosition);
+      event.preventDefault();
+      const newPosition = Math.trunc(offsetX);
       setPosition(newPosition);
+    } else if (!scrolling) {
+      if (Math.abs(offsetX) > Math.abs(touch.pageY - initialTouch.pageY)) {
+        setDragging(true);
+      } else {
+        setScrolling(true);
+      }
     }
   }
 
-  function handleTouchEnd(event) {
+  function handleTouchEnd() {
     if (Math.abs(position) > MIN_DRAG) {
       if (position > 0) {
         handleClick();
       } else {
         deleteTask();
       }
-    }
-    else {
+    } else {
       setRestoring(true);
       setTimeout(() => setRestoring(false), 1000);
     }
+    setScrolling(false);
     setDragging(false);
     setPosition(0);
   }
@@ -58,14 +67,21 @@ export function Task({ task, handleClick }) {
   }
 
   useEffect(() => {
-    function handleScroll(event) {
-      if (dragging) event.preventDefault();
-      // if (dragging) event.stopPropagation();
+    if (dragging) {
+      document.documentElement.style.overflow = 'hidden';
+    } else {
+      document.documentElement.style.overflow = 'auto';
     }
 
-    window.addEventListener('scroll', handleScroll);
+    // function handleScroll() {
+    //   const docEl = document.documentElement;
+    //   // if (dragging) alert(docEl.scrollTop);
+    //   if (dragging) docEl.scrollTo(0, docEl.scrollTop);
+    // }
 
-    return () => window.removeEventListener('scroll', handleScroll);
+    // window.addEventListener('scroll', handleScroll);
+
+    // return () => window.removeEventListener('scroll', handleScroll);
   }, [dragging]);
 
   if (editing) {
@@ -81,9 +97,9 @@ export function Task({ task, handleClick }) {
         ...(!dragging && { transition: `left ${DRAG_BACK_SECS}s` }),
       }}
       onClick={() => setEditing(true)}
-      onMouseDown={e => handleTouchStart({touches: [{pageX: e.pageX, pageY: e.pageY}]})}
-      onMouseMove={e => handleTouchMove({touches: [{pageX: e.pageX, pageY: e.pageY}]})}
-      onMouseUp={handleTouchEnd}
+      // onMouseDown={e => handleTouchStart({touches: [{pageX: e.pageX, pageY: e.pageY}]})}
+      // onMouseMove={e => handleTouchMove({touches: [{pageX: e.pageX, pageY: e.pageY}]})}
+      // onMouseUp={handleTouchEnd}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -105,7 +121,7 @@ export function Task({ task, handleClick }) {
         <FaTimes />
       </div>
 
-      {(dragging || restoring)  && position <= 0 && (
+      {(dragging || restoring) && position <= 0 && (
         <div className={`task${cssModifier}__after`}>
           <FaTimes />
         </div>

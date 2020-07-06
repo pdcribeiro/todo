@@ -73,23 +73,14 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/tr
 ## TODO
 
 WIP goals and times
-* 10 min fix possible mem leak
+* 
 
-
-Sliding
-* Render 'before' and 'after' elements until 'main' element reaches initial position
-* Prevent scrolling when sliding
-* Handle sliding outside of element
-* Handle stop sliding when out of page
 
 Order tasks
-* How to define task order?
-    * Array of task ids?
 * Click and hold
 * Drag handle?
     * For large screens only?
     * Show on hover? (desktop only)
-* Option to show/hide drag handle?
 * Drag new task to its place
     * If using drag handle, handle blur into drag handle
 
@@ -100,10 +91,8 @@ Authentication
     * Task filtering
 
 UI
+* fix: no google font on firefox mobile
 * Always show completed tasks toggler when folded?
-
-Responsiveness
-* Use media queries, with min-dimension instead of min-width, instead of responsive font-size
 
 Settings
 * Switch sliding direction?
@@ -117,5 +106,15 @@ Settings
     * By created date
     * By target date
         * Tasks with no date at top/bottom
+* Option to show/hide drag handle?
+
+Responsiveness
+* Fix tasks get smaller when editing on mobile
+    * Use media queries, with min-dimension instead of min-width, instead of responsive font-size?
+
+Sliding
+* Prevent scrolling when sliding
+    * Test on Safari mobile and add preventDefault() on touchmove if needed.
+* Only drag if touchmove_speed > ... ?
 
 * Create DraggableTask component?

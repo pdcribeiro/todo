@@ -44,7 +44,14 @@ export function TaskEditor({ task, expanded, finish }) {
   }
 
   function update() {
-    return db.collection('tasks').doc(task.id).update({ content: taskContent });
+    if (taskContent !== task.content) {
+      return db
+        .collection('tasks')
+        .doc(task.id)
+        .update({ content: taskContent });
+    } else {
+      return Promise.resolve();
+    }
   }
 
   function create() {
