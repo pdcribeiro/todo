@@ -18,30 +18,29 @@ export function TaskEditor({ task, expanded, finish }) {
     } else {
       inputEl.current.blur();
     }
-    return () => finish?.();
+    return finish;
   }, [expanded]);
 
   function save() {
     if (taskContent !== '') {
-      if (task) {
-      } else {
-        setSaving(true);
-        (task ? update() : create())
-          .then(() => {
-            setTaskContent('');
-          })
-          .catch(error => {
-            console.error(
-              `Error ${task ? 'updating' : 'creating'} task: `,
-              error
-            );
-          })
-          .finally(() => {
-            setSaving(false);
-          });
-      }
+      setSaving(true);
+      (task ? update() : create())
+        .then(() => {
+          setTaskContent('');
+        })
+        .catch(error => {
+          console.error(
+            `Error ${task ? 'updating' : 'creating'} task: `,
+            error
+          );
+        })
+        .finally(() => {
+          setSaving(false);
+          finish();
+        });
+    } else {
+      finish();
     }
-    finish();
   }
 
   function update() {
@@ -67,7 +66,7 @@ export function TaskEditor({ task, expanded, finish }) {
         value={taskContent}
         onChange={e => setTaskContent(e.target.value)}
         onKeyDown={e => e.keyCode === 13 && !saving && save()}
-        onBlur={!saving && save}
+        onBlur={() => !saving && save()}
         placeholder={task ? 'Task content' : 'New task'}
       />
     </div>
