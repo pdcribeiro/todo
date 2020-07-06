@@ -7,8 +7,10 @@ const DRAG_BACK_SECS = 0.5;
 const MIN_DRAG = 100;
 
 export function Task({ task, handleClick }) {
+  
   const [editing, setEditing] = useState(false);
   const [dragging, setDragging] = useState(false);
+  const [restoring, setRestoring] = useState(false);
   const [initialPosition, setInitialPosition] = useState(null);
   const [position, setPosition] = useState(0);
   const thisEl = useRef(null);
@@ -25,13 +27,17 @@ export function Task({ task, handleClick }) {
     }
   }
 
-  function handleTouchEnd() {
+  function handleTouchEnd(event) {
     if (Math.abs(position) > MIN_DRAG) {
       if (position > 0) {
         handleClick();
       } else {
         deleteTask();
       }
+    }
+    else {
+      setRestoring(true);
+      setTimeout(() => setRestoring(false), 1000);
     }
     setDragging(false);
     setPosition(0);
@@ -75,12 +81,15 @@ export function Task({ task, handleClick }) {
         ...(!dragging && { transition: `left ${DRAG_BACK_SECS}s` }),
       }}
       onClick={() => setEditing(true)}
+      onMouseDown={e => handleTouchStart({touches: [{pageX: e.pageX, pageY: e.pageY}]})}
+      onMouseMove={e => handleTouchMove({touches: [{pageX: e.pageX, pageY: e.pageY}]})}
+      onMouseUp={handleTouchEnd}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       ref={thisEl}
     >
-      {dragging && position >= 0 && (
+      {(dragging || restoring) && position >= 0 && (
         <div className={`task${cssModifier}__before`}>
           {task.completed ? <FaRegCircle /> : <FaCheck />}
         </div>
@@ -96,7 +105,7 @@ export function Task({ task, handleClick }) {
         <FaTimes />
       </div>
 
-      {dragging && position <= 0 && (
+      {(dragging || restoring)  && position <= 0 && (
         <div className={`task${cssModifier}__after`}>
           <FaTimes />
         </div>

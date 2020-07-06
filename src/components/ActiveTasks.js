@@ -4,6 +4,7 @@ import { db } from '../firebase';
 import { Task } from './Task';
 
 export function ActiveTasks({ tasks }) {
+  
   function completeTask(taskId) {
     db.collection('tasks')
       .doc(taskId)

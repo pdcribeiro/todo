@@ -73,12 +73,8 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/tr
 ## TODO
 
 WIP goals and times
-* 10 min to edit tasks
+* 10 min fix possible mem leak
 
-
-* Edit tasks
-    * Click to edit task content?
-    * Restore original content on enter press when empty
 
 Sliding
 * Render 'before' and 'after' elements until 'main' element reaches initial position
@@ -103,6 +99,12 @@ Authentication
     * Register/login/logout
     * Task filtering
 
+UI
+* Always show completed tasks toggler when folded?
+
+Responsiveness
+* Use media queries, with min-dimension instead of min-width, instead of responsive font-size
+
 Settings
 * Switch sliding direction?
     * Which direction do right-handed people prefer as primary direction
@@ -115,3 +117,5 @@ Settings
     * By created date
     * By target date
         * Tasks with no date at top/bottom
+
+* Create DraggableTask component?

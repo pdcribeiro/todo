@@ -5,6 +5,7 @@ import { FaChevronUp, FaChevronDown } from 'react-icons/fa';
 import { Task } from './Task';
 
 export function CompletedTasks({ tasks }) {
+  
   const [showCompleted, setShowCompleted] = useState(false);
 
   useEffect(() => {

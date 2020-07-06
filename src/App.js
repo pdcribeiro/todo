@@ -8,6 +8,7 @@ import { CompletedTasks } from './components/CompletedTasks';
 import { Navbar } from './components/Navbar';
 
 export default function App() {
+  
   const [showNewTask, setShowNewTask] = useState(false);
   const { activeTasks, completedTasks } = useTasks();
 
