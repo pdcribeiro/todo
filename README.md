@@ -73,18 +73,13 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/tr
 ## TODO
 
 Predicted duration and commit
-* 20 min | fix: can't edit tasks on mobile 
+* 
 
-* Check if non state variables are working correctly
+* Redo primaryAction (aka mark), swipe and scroll
 
 Order tasks
-* Reorder existing tasks
-    * Shift tasks
-    * If not swiping and not scrolling let event propagate
-    * Update order in db
-    * Handle drag outside of task element
-* Delete task
-* Drag new task to its place
+* When deleting task
+* When dragging new task to its place
     * If using drag handle, handle blur into drag handle
 
 * useReducer in Task? Or use object as state.

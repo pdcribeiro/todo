@@ -3,7 +3,7 @@ import * as firebase from 'firebase/app';
 import { db } from '../firebase';
 import { TaskList } from './TaskList';
 
-export function ActiveTasks({ tasks }) {
+export function ActiveTasks({ tasks, order }) {
   
   function completeTask(taskId) {
     db.collection('tasks')
@@ -12,9 +12,9 @@ export function ActiveTasks({ tasks }) {
         completed: firebase.firestore.Timestamp.now(),
       })
       .catch(error => {
-        console.error('Failed to set task completed: ', error);
+        console.error('Failed to set task completed.', error);
       });
   }
 
-  return <TaskList tasks={tasks} handleMark={completeTask} />;
+  return <TaskList tasks={tasks} order={order} handleMark={completeTask} />;
 }

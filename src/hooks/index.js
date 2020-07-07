@@ -1,29 +1,45 @@
 import { useState, useEffect } from 'react';
 import { db } from '../firebase';
 
-export function useTasks() {
+// export const USER_ID = 'JuYpEGxmn1bmDfpAFeRU';
+export const ORDER_DOC = 'NpxTntymkx3zncLAJ2y5';
 
-  const [activeTasks, setActiveTasks] = useState(null);
-  const [completedTasks, setCompletedTasks] = useState(null);
+export function useTasks() {
+  const [tasks, setTasks] = useState(null);
+  const [order, setOrder] = useState(null);
 
   useEffect(() => {
     const tasksQuery = db.collection('tasks');
+    const orderDocument = db.collection('meta').doc(ORDER_DOC);
 
-    const unsubscribe = tasksQuery.onSnapshot(snapshot => {
-      console.log('new snapshot!');
-      const newTasks = snapshot.docs.map(task => ({
-        id: task.id,
-        ...task.data(),
-      }));
+    const unsubscribeTasks = tasksQuery.onSnapshot(col => {
+      console.log('new tasks snapshot!');
+      const newTasks = col.docs.reduce(
+        (tasks, task) => {
+          const taskData = task.data();
+          if (taskData.completed) {
+            tasks.completed[task.id] = taskData;
+          } else {
+            tasks.active[task.id] = taskData;
+          }
+          return tasks;
+        },
+        { active: {}, completed: {} }
+      );
 
-      setActiveTasks(newTasks.filter(task => !task.completed));
-      setCompletedTasks(newTasks.filter(task => task.completed));
+      setTasks(newTasks);
     });
 
-    return unsubscribe;
+    const unsubscribeOrder = orderDocument.onSnapshot(doc => {
+      console.log('new order snapshot!');
+      setOrder(doc.data().order);
+    });
+
+    return () => {
+      unsubscribeTasks();
+      unsubscribeOrder();
+    };
   }, []);
 
-  return { activeTasks, completedTasks };
+  return { tasks, order };
 }
-
-// demoUserId: JuYpEGxmn1bmDfpAFeRU

@@ -2,12 +2,7 @@ import React from 'react';
 import { TaskEditor } from './TaskEditor';
 import { FaCheck, FaRegCircle, FaTimes } from 'react-icons/fa';
 
-const DRAG_BACK_SECS = 0.5;
-const DRAG_STYLE = {
-  borderWidth: 0,
-  boxShadow: '0 0 2px 2px #555',
-  zIndex: 10,
-};
+const UNSWIPE_SECS = 0.5;
 
 export function Task({
   task,
@@ -15,10 +10,7 @@ export function Task({
   finishEditing,
   positionX,
   unswiping,
-  positionY,
-  undragging,
   handleMark,
-  handleMouseLeave,
   deleteTask,
 }) {
   function preHandleMark(event) {
@@ -26,13 +18,9 @@ export function Task({
     handleMark(task.id);
   }
 
-  function bubbleTaskId(event) {
-    event.taskId = task.id;
-  }
-
-  if (editing) {
-    return <TaskEditor task={task} finish={finishEditing} />;
-  }
+  // if (editing) {
+  //   return <TaskEditor task={task} finish={finishEditing} />;
+  // }
 
   const cssModifier = task.completed ? '--completed' : '';
   return (
@@ -40,24 +28,8 @@ export function Task({
       className={`task${cssModifier}`}
       style={{
         ...(positionX !== undefined && { left: positionX + 'px' }),
-        ...(positionY !== undefined && {
-          top: positionY + 'px',
-          ...DRAG_STYLE,
-        }),
-        ...(unswiping && { transition: `left ${DRAG_BACK_SECS}s` }),
-        ...(undragging && {
-          transition: `top ${DRAG_BACK_SECS}s`,
-          top: '0px',
-          ...DRAG_STYLE,
-        }),
+        ...(unswiping && { transition: `left ${UNSWIPE_SECS}s` }),
       }}
-      onTouchStart={bubbleTaskId}
-      onTouchMove={bubbleTaskId}
-      onTouchEnd={bubbleTaskId}
-      onMouseDown={bubbleTaskId}
-      onMouseMove={bubbleTaskId}
-      onMouseUp={bubbleTaskId}
-      onMouseLeave={handleMouseLeave}
     >
       {positionX >= 0 && (
         <div className={`task${cssModifier}__before`}>
