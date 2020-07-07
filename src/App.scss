@@ -110,12 +110,13 @@ html {
 
 .App {
   // height: 100vh;
+  overflow-x: hidden;
 
   font-size: $medium-font-size;
   font-family: 'Quicksand', sans-serif;
   color: white;
-  overflow-x: hidden;
-
+  user-select: none;
+  
   .title {
     padding: 10px 0;
 
@@ -198,6 +199,8 @@ html {
       background-color: $bg-color;
 
       position: relative;
+      top: 0;
+      left: 0;
 
       &__check {
         display: flex;

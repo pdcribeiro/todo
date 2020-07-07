@@ -72,13 +72,15 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/tr
 
 ## TODO
 
-WIP goals and times
-* 30 min | feat: start order tasks
+Predicted duration and commit
+* 20 min | fix: can't edit tasks on mobile 
 
+* Check if non state variables are working correctly
 
 Order tasks
 * Reorder existing tasks
     * Shift tasks
+    * If not swiping and not scrolling let event propagate
     * Update order in db
     * Handle drag outside of task element
 * Delete task

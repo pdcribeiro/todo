@@ -4,6 +4,7 @@ import { db } from '../firebase';
 import { MdDragHandle } from 'react-icons/md';
 
 export function TaskEditor({ task, expanded, finish }) {
+  const thisEl = useRef(null);
   const inputEl = useRef(null);
   const [taskContent, setTaskContent] = useState('');
   const [saving, setSaving] = useState(false);
@@ -63,7 +64,7 @@ export function TaskEditor({ task, expanded, finish }) {
 
   const cssModifier = task ? '--editing' : expanded ? '--expanded' : '';
   return (
-    <div className={`task-editor${cssModifier}`}>
+    <div className={`task-editor${cssModifier}`} ref={thisEl}>
       <div className={`task-editor${cssModifier}__drag-handle`}>
         <MdDragHandle />
       </div>

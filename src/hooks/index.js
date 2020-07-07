@@ -7,7 +7,6 @@ export function useTasks() {
   const [completedTasks, setCompletedTasks] = useState(null);
 
   useEffect(() => {
-    console.log('using effect...');
     const tasksQuery = db.collection('tasks');
 
     const unsubscribe = tasksQuery.onSnapshot(snapshot => {
