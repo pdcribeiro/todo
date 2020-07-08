@@ -26,7 +26,7 @@ export function CompletedTasks({ tasks, order }) {
         console.error('Failed to set task active.', error);
       });
   }
-  
+
   return (
     <>
       <div
@@ -40,8 +40,10 @@ export function CompletedTasks({ tasks, order }) {
           <FaChevronDown className="show-completed__toggler" />
         )}
       </div>
-      
-      {showCompleted && <TaskList tasks={tasks} order={order} handleMark={unsetCompleted} />}
+
+      {showCompleted && (
+        <TaskList tasks={tasks} order={order} checkTask={unsetCompleted} />
+      )}
     </>
   );
 }

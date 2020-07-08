@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import * as firebase from 'firebase/app';
+
+import { NewTaskContext } from '../context';
 import { db } from '../firebase';
 import { MdDragHandle } from 'react-icons/md';
 
-export function TaskEditor({ task, expanded, finish }) {
-  const thisEl = useRef(null);
+export function TaskEditor({ task, hide }) {
+  const newTask = useContext(NewTaskContext);
   const inputEl = useRef(null);
   const [taskContent, setTaskContent] = useState('');
   const [saving, setSaving] = useState(false);
@@ -14,15 +16,16 @@ export function TaskEditor({ task, expanded, finish }) {
     if (task) {
       setTaskContent(task.content);
       inputEl.current.focus();
-    } else if (expanded) {
+    } else if (newTask.visible) {
       inputEl.current.focus();
     } else {
       inputEl.current.blur();
     }
-    return finish;
-  }, [expanded]);
+    return hide;
+    // eslint-disable-next-line
+  }, [newTask.visible]);
 
-  function save() {
+  function save(event) {
     if (taskContent !== '') {
       setSaving(true);
       (task ? update() : create())
@@ -31,17 +34,18 @@ export function TaskEditor({ task, expanded, finish }) {
         })
         .catch(error => {
           console.error(
-            `Error ${task ? 'updating' : 'creating'} task: `,
+            `Error ${task ? 'updating' : 'creating'} task.`,
             error
           );
         })
         .finally(() => {
           setSaving(false);
-          finish();
+          handleHide();
         });
     } else {
-      finish();
+      handleHide();
     }
+    if (task) event.taskId = task.id;
   }
 
   function update() {
@@ -62,9 +66,18 @@ export function TaskEditor({ task, expanded, finish }) {
     });
   }
 
-  const cssModifier = task ? '--editing' : expanded ? '--expanded' : '';
+  function handleHide() {
+    if (task) {
+      hide();
+    } else {
+      newTask.hide();
+    }
+  }
+
+  //TODO try removing '--editing' modifier
+  const cssModifier = task ? '--editing' : newTask.visible ? '--expanded' : '';
   return (
-    <div className={`task-editor${cssModifier}`} ref={thisEl}>
+    <div className={`task-editor${cssModifier}`}>
       <div className={`task-editor${cssModifier}__drag-handle`}>
         <MdDragHandle />
       </div>

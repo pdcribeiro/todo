@@ -1,45 +1,46 @@
 import React from 'react';
+
+import { db } from '../firebase';
 import { TaskEditor } from './TaskEditor';
 import { FaCheck, FaRegCircle, FaTimes } from 'react-icons/fa';
 
-const UNSWIPE_SECS = 0.5;
-
-export function Task({
-  task,
-  editing,
-  finishEditing,
-  positionX,
-  unswiping,
-  handleMark,
-  deleteTask,
-}) {
-  function preHandleMark(event) {
-    event.stopPropagation();
-    handleMark(task.id);
+export function Task({ task, editing, check }) {
+  function bubbleTaskId(event) {
+    event.taskId = task.id;
   }
 
-  // if (editing) {
-  //   return <TaskEditor task={task} finish={finishEditing} />;
-  // }
+  function handleCheck(event) {
+    event.stopPropagation();
+    check(task.id);
+  }
+
+  function deleteTask() {
+    db.collection('tasks')
+      .doc(task.id)
+      .delete()
+      .catch(function (error) {
+        console.error('Failed to delete task: ', error);
+      });
+  }
+
+  if (!task) {
+    return <TaskEditor />;
+  }
+
+  if (editing) {
+    return <TaskEditor task={task} />;
+  }
 
   const cssModifier = task.completed ? '--completed' : '';
   return (
     <li
       className={`task${cssModifier}`}
-      style={{
-        ...(positionX !== undefined && { left: positionX + 'px' }),
-        ...(unswiping && { transition: `left ${UNSWIPE_SECS}s` }),
-      }}
+      onMouseDown={bubbleTaskId}
+      onMouseUp={bubbleTaskId}
     >
-      {positionX >= 0 && (
-        <div className={`task${cssModifier}__before`}>
-          {task.completed ? <FaRegCircle /> : <FaCheck />}
-        </div>
-      )}
-
       <div
         className={`task${cssModifier}__check`}
-        onClick={preHandleMark}
+        onClick={handleCheck}
         onMouseUp={e => e.stopPropagation()}
       >
         {task.completed ? <FaCheck /> : <FaRegCircle />}
@@ -50,12 +51,6 @@ export function Task({
       <div className="delete-task" onClick={deleteTask}>
         <FaTimes />
       </div>
-
-      {positionX <= 0 && (
-        <div className={`task${cssModifier}__after`}>
-          <FaTimes />
-        </div>
-      )}
     </li>
   );
 }

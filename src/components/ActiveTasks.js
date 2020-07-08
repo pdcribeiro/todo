@@ -4,7 +4,6 @@ import { db } from '../firebase';
 import { TaskList } from './TaskList';
 
 export function ActiveTasks({ tasks, order }) {
-  
   function completeTask(taskId) {
     db.collection('tasks')
       .doc(taskId)
@@ -16,5 +15,12 @@ export function ActiveTasks({ tasks, order }) {
       });
   }
 
-  return <TaskList tasks={tasks} order={order} handleMark={completeTask} />;
+  return (
+    <TaskList
+      tasks={tasks}
+      order={order}
+      newTask={true}
+      checkTask={completeTask}
+    />
+  );
 }

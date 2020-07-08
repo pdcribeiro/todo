@@ -73,14 +73,16 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/tr
 ## TODO
 
 Predicted duration and commit
-* 
-
-* Redo primaryAction (aka mark), swipe and scroll
+* 20min | refactor: add task editor context
+* 40min | fix: reimplement swiping
 
 Order tasks
+* When adding new task
 * When deleting task
-* When dragging new task to its place
+* Allow dragging new task to its place
     * If using drag handle, handle blur into drag handle
+
+* Redo primaryAction (aka mark), swipe and scroll
 
 * useReducer in Task? Or use object as state.
 
