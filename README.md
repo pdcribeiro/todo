@@ -1,6 +1,16 @@
 # TODO
 
+This is a simple todo web app.
+
+It was developed using React and Firebase.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+
+## Live demo
+
+[http://todoapp.ddns.net](http://todoapp.ddns.net)
+
 
 ## Available Scripts
 
@@ -68,55 +78,3 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `npm run build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
-
-
-## TODO
-
-Predicted duration and commit
-* 20min | refactor: add task editor context
-* 40min | fix: reimplement swiping
-
-Order tasks
-* When adding new task
-* When deleting task
-* Allow dragging new task to its place
-    * If using drag handle, handle blur into drag handle
-
-* Redo primaryAction (aka mark), swipe and scroll
-
-* useReducer in Task? Or use object as state.
-
-Authentication
-* Firebase auth
-* User auth
-    * Register/login/logout
-    * Task filtering
-
-UI
-* fix: no google font on firefox mobile
-* Always show completed tasks toggler when folded?
-
-Settings
-* Switch sliding direction?
-    * Which direction do right-handed people prefer as primary direction
-* Enable/disable delete button
-* Add task
-    * Save button?
-    * Click again on add task button?
-    * Ignore blur into add task button
-* Order by date
-    * By created date
-    * By target date
-        * Tasks with no date at top/bottom
-* Option to show/hide drag handle?
-
-Responsiveness
-* Fix tasks get smaller when editing on mobile
-    * Use media queries, with min-dimension instead of min-width, instead of responsive font-size?
-
-Sliding
-* Prevent scrolling when sliding
-    * Test on Safari mobile and add preventDefault() on touchmove if needed.
-* Only drag if touchmove_speed > ... ?
-
-* Create DraggableTask component?
