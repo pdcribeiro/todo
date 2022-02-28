@@ -6,6 +6,9 @@
   let newTodo = '';
   let todos = [];
 
+  $: pending = todos.filter((t) => !t.done);
+  $: done = todos.filter((t) => t.done);
+
   onMount(async () => (todos = await fetchingTodos));
 
   async function addTodo() {
@@ -17,9 +20,15 @@
     newTodo = '';
   }
 
-  async function completeTodo(id) {
-    await api('todos').delete(id);
-    todos = todos.filter((t) => t.id !== id);
+  async function toggleTodo(todo) {
+    await api('todos').patch(todo.id, { done: !todo.done });
+    todo.done = !todo.done;
+    todos = todos;
+  }
+
+  async function deleteTodo(todo) {
+    await api('todos').delete(todo.id);
+    todos = todos.filter((t) => t.id !== todo.id);
   }
 </script>
 
@@ -38,15 +47,25 @@
 {#await fetchingTodos}
   <p>We're fetching your todo list. Please wait a moment</p>
 {:then}
-  {#if todos.length}
+  {#if pending.length}
     <ul>
-      {#each todos as todo}
-        <li on:click={completeTodo(todo.id)}>{todo.content}</li>
+      {#each pending as todo (todo.id)}
+        <li on:click={toggleTodo(todo)}>
+          {todo.content}
+        </li>
       {/each}
     </ul>
   {:else}
     <p>You're all done!</p>
   {/if}
+  <ul>
+    {#each done as todo (todo.id)}
+      <li style:color="gray" on:click={toggleTodo(todo)}>
+        {todo.content}
+        <button on:click|stopPropagation={deleteTodo(todo)}>X</button>
+      </li>
+    {/each}
+  </ul>
 {:catch}
   <p>Sorry. We couldn't fetch your todo list :(</p>
 {/await}
