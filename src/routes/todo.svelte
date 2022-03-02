@@ -47,18 +47,16 @@
 {#await fetchingTodos}
   <p>We're fetching your todo list. Please wait a moment</p>
 {:then}
-  {#if pending.length}
-    <ul>
-      {#each pending as todo (todo.id)}
-        <li>
-          <button on:click={toggleTodo(todo)}>☐</button>
-          {todo.content}
-        </li>
-      {/each}
-    </ul>
-  {:else}
-    <p>You're all done!</p>
-  {/if}
+  <ul>
+    {#each pending as todo (todo.id)}
+      <li>
+        <button on:click={toggleTodo(todo)}>☐</button>
+        {todo.content}
+      </li>
+    {:else}
+      <li>You're all done!</li>
+    {/each}
+  </ul>
   <ul>
     {#each done as todo (todo.id)}
       <li style:color="gray">
