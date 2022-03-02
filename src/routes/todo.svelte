@@ -5,6 +5,7 @@
   const fetchingTodos = api('todos').get();
   let newTodo = '';
   let todos = [];
+  let selected;
 
   $: pending = todos.filter((t) => !t.done);
   $: done = todos.filter((t) => t.done);
@@ -18,6 +19,10 @@
     const todo = await api('todos').post({ content });
     todos = todos.concat(todo);
     newTodo = '';
+  }
+
+  async function selectTodo(todo) {
+    selected = todo?.id;
   }
 
   async function toggleTodo(todo) {
@@ -36,6 +41,8 @@
   <title>TODO</title>
 </svelte:head>
 
+<svelte:window on:click={() => selectTodo(null)} />
+
 <a href="/">Back</a>
 
 <h1>TODO</h1>
@@ -51,7 +58,10 @@
     {#each pending as todo (todo.id)}
       <li>
         <button on:click={toggleTodo(todo)}>☐</button>
-        {todo.content}
+        <span on:click|stopPropagation={selectTodo(todo)}>{todo.content}</span>
+        {#if todo.id === selected}
+          <button on:click={deleteTodo(todo)}>X</button>
+        {/if}
       </li>
     {:else}
       <li>You're all done!</li>
@@ -61,8 +71,10 @@
     {#each done as todo (todo.id)}
       <li style:color="gray">
         <button on:click={toggleTodo(todo)}>☒</button>
-        {todo.content}
-        <button on:click={deleteTodo(todo)}>X</button>
+        <span on:click|stopPropagation={selectTodo(todo)}>{todo.content}</span>
+        {#if todo.id === selected}
+          <button on:click={deleteTodo(todo)}>X</button>
+        {/if}
       </li>
     {/each}
   </ul>
