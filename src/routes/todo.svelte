@@ -50,7 +50,8 @@
   {#if pending.length}
     <ul>
       {#each pending as todo (todo.id)}
-        <li on:click={toggleTodo(todo)}>
+        <li>
+          <button on:click={toggleTodo(todo)}>☐</button>
           {todo.content}
         </li>
       {/each}
@@ -60,12 +61,27 @@
   {/if}
   <ul>
     {#each done as todo (todo.id)}
-      <li style:color="gray" on:click={toggleTodo(todo)}>
+      <li style:color="gray">
+        <button on:click={toggleTodo(todo)}>☒</button>
         {todo.content}
-        <button on:click|stopPropagation={deleteTodo(todo)}>X</button>
+        <button on:click={deleteTodo(todo)}>X</button>
       </li>
     {/each}
   </ul>
 {:catch}
   <p>Sorry. We couldn't fetch your todo list :(</p>
 {/await}
+
+<style>
+  ul {
+    padding: 0;
+    list-style-type: none;
+    font-size: 20px;
+  }
+  button {
+    border: none;
+    background: none;
+    font-size: inherit;
+    color: inherit;
+  }
+</style>
