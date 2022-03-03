@@ -43,50 +43,77 @@
 
 <svelte:window on:click={() => selectTodo(null)} />
 
-<a href="/">Back</a>
+<div class="content">
+  <a href="/">Back</a>
 
-<h1>TODO</h1>
+  <h1>TODO</h1>
 
-<form on:submit|preventDefault={addTodo}>
-  <input type="text" bind:value={newTodo} />
-</form>
+  <form on:submit|preventDefault={addTodo}>
+    <input type="text" bind:value={newTodo} />
+  </form>
 
-{#await fetchingTodos}
-  <p>We're fetching your todo list. Please wait a moment</p>
-{:then}
-  <ul>
-    {#each pending as todo (todo.id)}
-      <li>
-        <button on:click={toggleTodo(todo)}>☐</button>
-        <span on:click|stopPropagation={selectTodo(todo)}>{todo.content}</span>
-        {#if todo.id === selected}
-          <button on:click={deleteTodo(todo)}>X</button>
-        {/if}
-      </li>
-    {:else}
-      <li>You're all done!</li>
-    {/each}
-  </ul>
-  <ul>
-    {#each done as todo (todo.id)}
-      <li style:color="gray">
-        <button on:click={toggleTodo(todo)}>☒</button>
-        <span on:click|stopPropagation={selectTodo(todo)}>{todo.content}</span>
-        {#if todo.id === selected}
-          <button on:click={deleteTodo(todo)}>X</button>
-        {/if}
-      </li>
-    {/each}
-  </ul>
-{:catch}
-  <p>Sorry. We couldn't fetch your todo list :(</p>
-{/await}
+  <div class="list">
+    {#await fetchingTodos}
+      <p>We're fetching your todo list. Please wait a moment</p>
+    {:then}
+      {#if pending.length}
+        <ul>
+          {#each pending as todo (todo.id)}
+            <li>
+              <button on:click={toggleTodo(todo)}>☐</button>
+              <span on:click|stopPropagation={selectTodo(todo)}>
+                {todo.content}
+              </span>
+              {#if todo.id === selected}
+                <button on:click={deleteTodo(todo)}>x</button>
+              {/if}
+            </li>
+          {/each}
+        </ul>
+      {:else}
+        <p style:text-align="center">You're all done!</p>
+      {/if}
+      <ul>
+        {#each done as todo (todo.id)}
+          <li style:color="gray">
+            <button on:click={toggleTodo(todo)}>☒</button>
+            <span on:click|stopPropagation={selectTodo(todo)}>
+              {todo.content}
+            </span>
+            {#if todo.id === selected}
+              <button on:click={deleteTodo(todo)}>x</button>
+            {/if}
+          </li>
+        {/each}
+      </ul>
+    {:catch}
+      <p>Sorry. We couldn't fetch your todo list :(</p>
+    {/await}
+  </div>
+</div>
 
 <style>
+  .content {
+    max-width: 500px;
+  }
+  input {
+    display: block;
+    width: 75%;
+    margin: auto;
+    font-size: inherit;
+  }
+  .list {
+    margin: 12.5%;
+  }
   ul {
-    padding: 0;
+    padding: 0px;
     list-style-type: none;
-    font-size: 20px;
+  }
+  li {
+    display: flex;
+  }
+  li span {
+    flex-grow: 1;
   }
   button {
     border: none;
